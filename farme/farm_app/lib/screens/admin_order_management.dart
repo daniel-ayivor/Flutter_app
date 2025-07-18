@@ -128,7 +128,7 @@ class AdminOrderCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '\$${order.total.toStringAsFixed(2)}',
+                  '₵${order.total.toStringAsFixed(2)}',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -181,7 +181,7 @@ class AdminOrderCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '\$${item.totalPrice.toStringAsFixed(2)}',
+                        '₵${item.totalPrice.toStringAsFixed(2)}',
                         style: TextStyle(fontSize: 12),
                       ),
                     ],

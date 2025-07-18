@@ -6,6 +6,7 @@ import '../providers/product_provider.dart';
 import '../authContext.dart';
 import '../model/order.dart' as farm_order;
 import 'order_confirmation.dart';
+import 'package:flutter/services.dart';
 
 class CheckoutScreen extends StatefulWidget {
   @override
@@ -24,6 +25,40 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     'Credit Card',
     'Mobile Money',
   ];
+
+  int _selectedCardIndex = 0;
+  final List<Map<String, dynamic>> _cards = [
+    {
+      'type': 'Mastercard',
+      'icon': Icons.credit_card,
+      'bgColor': Color(0xFF232323),
+      'logo': 'assets/mastercard.png', // Replace with your asset path
+      'number': '1234 1234 1234 1234',
+      'name': 'Jane Doe',
+      'expiry': '12/28',
+    },
+    {
+      'type': 'Visa',
+      'icon': Icons.credit_card,
+      'bgColor': Color(0xFF1A237E),
+      'logo': 'assets/visa.png', // Replace with your asset path
+      'number': '4321 4321 4321 4321',
+      'name': 'Jane Doe',
+      'expiry': '11/27',
+    },
+    {
+      'type': 'Mobile Money',
+      'icon': Icons.phone_android,
+      'bgColor': Color(0xFF388E3C),
+      'logo': 'assets/mobile_money.png',
+      'number': '',
+      'name': '',
+      'expiry': '',
+    },
+  ];
+  final TextEditingController _cardNameController = TextEditingController(text: 'Jane Doe');
+  final TextEditingController _cvvController = TextEditingController(text: '123');
+  final TextEditingController _cardNumberController = TextEditingController(text: '1234 **** **** ****');
 
   @override
   Widget build(BuildContext context) {
@@ -177,7 +212,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   ),
                   SizedBox(height: 16),
-                  
                   ..._paymentMethods.map((method) => RadioListTile<String>(
                     title: Text(method),
                     value: method,
@@ -188,6 +222,54 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       });
                     },
                   )),
+                  SizedBox(height: 18),
+                  if (_selectedPaymentMethod == 'Mobile Money') ...[
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Mobile Money Number',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.phone_android),
+                      ),
+                      keyboardType: TextInputType.phone,
+                    ),
+                  ] else if (_selectedPaymentMethod == 'Credit Card') ...[
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _cardNameController,
+                            decoration: InputDecoration(
+                              labelText: 'Cardholder Name',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: TextFormField(
+                            controller: _cvvController,
+                            decoration: InputDecoration(
+                              labelText: 'CVV',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.number,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 14),
+                    TextFormField(
+                      controller: _cardNumberController,
+                      decoration: InputDecoration(
+                        labelText: 'Card Number',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.credit_card),
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ],
+                  SizedBox(height: 18),
+                  // Remove the Save button (the ElevatedButton with child: Text('Save'))
                   
                   SizedBox(height: 32),
                   

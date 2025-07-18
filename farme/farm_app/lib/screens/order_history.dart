@@ -25,10 +25,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+        // Removed the leading back icon and onPressed
         title: Text('Order History'),
       ),
       body: Consumer<OrderProvider>(

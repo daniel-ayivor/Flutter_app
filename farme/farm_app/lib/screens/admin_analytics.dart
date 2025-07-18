@@ -42,7 +42,7 @@ class AdminAnalyticsPage extends StatelessWidget {
                   children: [
                     Text('Profit amount', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
                     SizedBox(height: 8),
-                    Text(' 25,237.00', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28)),
+                    Text('₵25,237.00', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28)),
                     SizedBox(height: 8),
                     Row(
                       children: [
@@ -92,7 +92,7 @@ class AdminAnalyticsPage extends StatelessWidget {
                 _StatCard(label: 'Total Products', value: '25'),
                 _StatCard(label: 'Categories', value: '4'),
                 _StatCard(label: 'Total Sold', value: '11,967'),
-                _StatCard(label: 'Monthly Income', value: '2.5jt'),
+                _StatCard(label: 'Monthly Income', value: '₵2.5k'),
               ],
             ),
             SizedBox(height: 24),

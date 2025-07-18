@@ -165,7 +165,7 @@ class _AdminProductManagementState extends State<AdminProductManagement> {
                     decoration: InputDecoration(
                       labelText: 'Price',
                       border: OutlineInputBorder(),
-                      prefixText: '\$',
+                      prefixText: '₵',
                     ),
                     keyboardType: TextInputType.number,
                     validator: (value) {
@@ -396,7 +396,7 @@ class AdminProductCard extends StatelessWidget {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    ' 4${product.price.toStringAsFixed(2)}',
+                    '₵${product.price.toStringAsFixed(2)}',
                     style: TextStyle(fontSize: 14, color: Colors.grey[800]),
                   ),
                   SizedBox(height: 2),

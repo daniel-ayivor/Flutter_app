@@ -109,15 +109,17 @@ class _ProductListingPageState extends State<ProductListingPage> {
           return ListView(
             padding: EdgeInsets.all(16),
             children: [
-              // Search Bar
+              // ✅ Updated Search Bar
               TextField(
                 controller: _searchController,
+                style: TextStyle(fontSize: 14),
                 decoration: InputDecoration(
                   hintText: 'Search...',
                   prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
                   filled: true,
                   fillColor: Colors.white,
+                  contentPadding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                 ),
                 onChanged: (value) {
                   context.read<ProductProvider>().setSearchQuery(value);
@@ -206,7 +208,6 @@ class _ProductCardHorizontal extends StatelessWidget {
               Text(product.rating.toString()),
             ],
           ),
-          // You can add time/calories here if you add them to your model
           Spacer(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -255,7 +256,6 @@ class _ProductCardVertical extends StatelessWidget {
                     Text(product.rating.toString()),
                   ],
                 ),
-                // You can add time/calories here if you add them to your model
                 Text(' 24${product.price.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
@@ -276,4 +276,4 @@ class _ProductCardVertical extends StatelessWidget {
       ),
     );
   }
-} 
+}

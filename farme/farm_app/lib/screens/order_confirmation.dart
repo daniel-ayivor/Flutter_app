@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../model/order.dart' as farm_order;
 import 'product_listing.dart';
 import 'order_history.dart';
+import '../user_taskbar.dart'; // Corrected import path for UserTaskbar
 
 class OrderConfirmationScreen extends StatelessWidget {
   final farm_order.FarmOrder order;
@@ -213,11 +214,12 @@ class OrderConfirmationScreen extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      // Navigate to order history
+                      // Navigate to UserTaskbar and select Orders tab
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => OrderHistoryScreen(),
+                          builder: (context) => UserTaskbar(),
+                          settings: RouteSettings(arguments: 3), // Orders tab index
                         ),
                         (route) => false,
                       );
