@@ -34,6 +34,7 @@ class _AdminProductManagementState extends State<AdminProductManagement> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       context.read<ProductProvider>().fetchProducts();
     });
   }

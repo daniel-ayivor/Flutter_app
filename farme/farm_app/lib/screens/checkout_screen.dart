@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../providers/order_provider.dart';
-import '../providers/product_provider.dart';
+
 import '../authContext.dart';
 import '../model/order.dart' as farm_order;
 import 'order_confirmation.dart';
-import 'package:flutter/services.dart';
+
 
 class CheckoutScreen extends StatefulWidget {
+  const CheckoutScreen({super.key});
+
   @override
-  _CheckoutScreenState createState() => _CheckoutScreenState();
+  CheckoutScreenState createState() => CheckoutScreenState();
 }
 
-class _CheckoutScreenState extends State<CheckoutScreen> {
+class CheckoutScreenState extends State<CheckoutScreen> {
   final _formKey = GlobalKey<FormState>();
   final _addressController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -26,36 +28,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     'Mobile Money',
   ];
 
-  int _selectedCardIndex = 0;
-  final List<Map<String, dynamic>> _cards = [
-    {
-      'type': 'Mastercard',
-      'icon': Icons.credit_card,
-      'bgColor': Color(0xFF232323),
-      'logo': 'assets/mastercard.png', // Replace with your asset path
-      'number': '1234 1234 1234 1234',
-      'name': 'Jane Doe',
-      'expiry': '12/28',
-    },
-    {
-      'type': 'Visa',
-      'icon': Icons.credit_card,
-      'bgColor': Color(0xFF1A237E),
-      'logo': 'assets/visa.png', // Replace with your asset path
-      'number': '4321 4321 4321 4321',
-      'name': 'Jane Doe',
-      'expiry': '11/27',
-    },
-    {
-      'type': 'Mobile Money',
-      'icon': Icons.phone_android,
-      'bgColor': Color(0xFF388E3C),
-      'logo': 'assets/mobile_money.png',
-      'number': '',
-      'name': '',
-      'expiry': '',
-    },
-  ];
   final TextEditingController _cardNameController = TextEditingController(text: 'Jane Doe');
   final TextEditingController _cvvController = TextEditingController(text: '123');
   final TextEditingController _cardNumberController = TextEditingController(text: '1234 **** **** ****');
@@ -167,40 +139,47 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                   SizedBox(height: 16),
                   
-                  TextFormField(
-                    controller: _addressController,
-                    decoration: InputDecoration(
-                      labelText: 'Delivery Address',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.location_on),
-                    ),
-                    maxLines: 3,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your delivery address';
-                      }
-                      return null;
-                    },
-                  ),
-                  
-                  SizedBox(height: 16),
-                  
-                  TextFormField(
-                    controller: _phoneController,
-                    decoration: InputDecoration(
-                      labelText: 'Phone Number',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.phone),
-                    ),
-                    keyboardType: TextInputType.phone,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your phone number';
-                      }
-                      return null;
-                    },
-                  ),
-                  
+             TextFormField(
+  controller: _addressController,
+  decoration: InputDecoration(
+    labelText: 'Delivery Address',
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10.0), // Adjust the radius for roundness
+    ),
+    prefixIcon: Icon(Icons.location_on),
+    contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+  ),
+  style: TextStyle(height: 1.2),
+  maxLines: 3,
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your delivery address';
+    }
+    return null;
+  },
+),
+
+SizedBox(height: 16),
+
+TextFormField(
+  controller: _phoneController,
+  decoration: InputDecoration(
+    labelText: 'Phone Number',
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10.0), // Same rounded corners
+    ),
+    prefixIcon: Icon(Icons.phone),
+    contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+  ),
+  style: TextStyle(height: 1.2),
+  keyboardType: TextInputType.phone,
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your phone number';
+    }
+    return null;
+  },
+),
                   SizedBox(height: 24),
                   
                   // Payment Method
@@ -334,6 +313,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       cartProvider.clear();
 
       // Navigate to order confirmation
+      if (!mounted) return;
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -342,12 +322,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         (route) => false,
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error placing order: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error placing order: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
       setState(() {
         _isProcessing = false;

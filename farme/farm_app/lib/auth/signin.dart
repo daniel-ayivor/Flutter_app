@@ -25,6 +25,7 @@ class _SignInState extends State<SignIn> {
   void _handleEmailSignIn(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     await authProvider.signIn(_emailController.text, _passwordController.text);
+    if (!mounted) return;
     if (authProvider.error != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(authProvider.error!)),

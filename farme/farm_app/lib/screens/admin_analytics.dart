@@ -29,7 +29,7 @@ class AdminAnalyticsPage extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.orange.withOpacity(0.12),
+                    color: Colors.orange.withAlpha((0.12 * 255).toInt()),
                     blurRadius: 16,
                     offset: Offset(0, 8),
                   ),

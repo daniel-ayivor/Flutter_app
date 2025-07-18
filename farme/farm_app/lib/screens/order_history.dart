@@ -5,15 +5,18 @@ import '../authContext.dart';
 import '../model/order.dart' as farm_order;
 
 class OrderHistoryScreen extends StatefulWidget {
+  const OrderHistoryScreen({super.key});
+
   @override
-  _OrderHistoryScreenState createState() => _OrderHistoryScreenState();
+  OrderHistoryScreenState createState() => OrderHistoryScreenState();
 }
 
-class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
+class OrderHistoryScreenState extends State<OrderHistoryScreen> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final authProvider = context.read<AuthProvider>();
       if (authProvider.user != null) {
         context.read<OrderProvider>().fetchUserOrders(authProvider.user!.uid);
@@ -96,7 +99,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
 class OrderCard extends StatelessWidget {
   final farm_order.FarmOrder order;
 
-  const OrderCard({Key? key, required this.order}) : super(key: key);
+  const OrderCard({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +145,7 @@ class OrderCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _getStatusColor(order.status).withOpacity(0.1),
+                    color: _getStatusColor(order.status).withAlpha((0.1 * 255).toInt()),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -173,7 +176,7 @@ class OrderCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 8),
-                ...(order.items ?? []).map((item) => Padding(
+                ...order.items.map((item) => Padding(
                   padding: EdgeInsets.only(bottom: 8),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -223,7 +226,7 @@ class OrderCard extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: _getStatusColor(order.status).withOpacity(0.1),
+                          color: _getStatusColor(order.status).withAlpha((0.1 * 255).toInt()),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(

@@ -40,6 +40,7 @@ class _SignUpState extends State<SignUp> {
     setState(() => _isLoading = true);
     final authProvider = context.read<AuthProvider>();
     await authProvider.signUp(email, password);
+    if (!mounted) return;
     setState(() => _isLoading = false);
 
     if (authProvider.error != null) {

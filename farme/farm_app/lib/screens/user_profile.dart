@@ -1,17 +1,34 @@
 import 'package:flutter/material.dart';
 
-class UserProfilePage extends StatelessWidget {
+class UserProfilePage extends StatefulWidget {
   final String name;
   final String email;
   final String avatarUrl;
   final bool isAdmin;
   const UserProfilePage({
-    Key? key,
+    super.key,
     required this.name,
     required this.email,
     this.avatarUrl = '',
     this.isAdmin = false,
-  }) : super(key: key);
+  });
+
+  @override
+  State<UserProfilePage> createState() => _UserProfilePageState();
+}
+
+class _UserProfilePageState extends State<UserProfilePage> {
+  bool _isLoggingOut = false;
+
+  Future<void> _handleLogout() async {
+    setState(() => _isLoggingOut = true);
+   
+    await Future.delayed(Duration(seconds: 1)); // Simulate async logout
+    if (!mounted) return;
+    setState(() => _isLoggingOut = false);
+   
+    Navigator.pushReplacementNamed(context, '/login');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +53,13 @@ class UserProfilePage extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 36,
-                  backgroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
-                  child: avatarUrl.isEmpty ? Icon(Icons.person, size: 40) : null,
+                  backgroundImage: widget.avatarUrl.isNotEmpty ? NetworkImage(widget.avatarUrl) : null,
+                  child: widget.avatarUrl.isEmpty ? Icon(Icons.person, size: 40) : null,
                 ),
                 SizedBox(height: 12),
-                Text(name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                Text(widget.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                 SizedBox(height: 4),
-                Text(email, style: TextStyle(color: Colors.grey)),
+                Text(widget.email, style: TextStyle(color: Colors.grey)),
                 SizedBox(height: 8),
                 Icon(Icons.edit, size: 18, color: Colors.grey[400]),
               ],
@@ -57,7 +74,7 @@ class UserProfilePage extends StatelessWidget {
           _ProfileTile(icon: Icons.receipt_long, label: 'My orders', onTap: () {}),
           _ProfileTile(icon: Icons.qr_code, label: 'Scan QR code', onTap: () {}),
           _ProfileTile(icon: Icons.lock_outline, label: 'Change password', onTap: () {}),
-          if (isAdmin) ...[
+          if (widget.isAdmin) ...[
             SizedBox(height: 20),
             Text('Admin', style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
             SizedBox(height: 8),
@@ -76,9 +93,10 @@ class UserProfilePage extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.logout, color: Colors.red),
             title: Text('Log Out', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-            onTap: () {
-              // TODO: Implement logout logic
-            },
+            onTap: _isLoggingOut ? null : _handleLogout,
+            trailing: _isLoggingOut
+                ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                : null,
           ),
         ],
       ),

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import '../model/order.dart' as farm_order;
 import 'product_listing.dart';
-import 'order_history.dart';
 import '../user_taskbar.dart'; // Corrected import path for UserTaskbar
 
 class OrderConfirmationScreen extends StatelessWidget {
   final farm_order.FarmOrder order;
 
-  const OrderConfirmationScreen({Key? key, required this.order}) : super(key: key);
+  const OrderConfirmationScreen({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +24,7 @@ class OrderConfirmationScreen extends StatelessWidget {
               width: 100,
               height: 100,
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withAlpha((0.1 * 255).toInt()),
                 shape: BoxShape.circle,
               ),
               child: Icon(
