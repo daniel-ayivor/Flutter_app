@@ -19,13 +19,14 @@ class AdminProfilePage extends StatelessWidget {
       body: SafeArea(
         child: user == null
             ? Center(child: Text('No admin logged in'))
-            : Column(
-                children: [
-                  // Profile Header
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 32.0),
-                    child: Column(
-                      children: [
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // Profile Header
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32.0),
+                      child: Column(
+                        children: [
                         CircleAvatar(
                           radius: 48,
                           backgroundColor: Colors.white,
@@ -63,35 +64,36 @@ class AdminProfilePage extends StatelessWidget {
                             _ProfileStat(label: 'Codes', value: '$codes/$maxCodes'),
                           ],
                         ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  // Profile Menu
-                  Expanded(
-                    child: Container(
+                    // Profile Menu (non-scrollable inside parent scroll)
+                    Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
                       ),
-                      child: ListView(
-                        padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                        children: [
-                          _ProfileMenuItem(icon: Icons.settings, label: 'Settings', onTap: () {}),
-                          _ProfileMenuItem(icon: Icons.credit_card, label: 'Billing Details', onTap: () {}),
-                          _ProfileMenuItem(icon: Icons.group, label: 'User Management', onTap: () {}),
-                          _ProfileMenuItem(icon: Icons.info_outline, label: 'Information', onTap: () {}),
-                          Divider(),
-                          _ProfileMenuItem(
-                            icon: Icons.logout,
-                            label: 'Log out',
-                            onTap: () => authProvider.signOut(),
-                            color: Colors.red,
-                          ),
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                        child: Column(
+                          children: [
+                            _ProfileMenuItem(icon: Icons.settings, label: 'Settings', onTap: () {}),
+                            _ProfileMenuItem(icon: Icons.credit_card, label: 'Billing Details', onTap: () {}),
+                            _ProfileMenuItem(icon: Icons.group, label: 'User Management', onTap: () {}),
+                            _ProfileMenuItem(icon: Icons.info_outline, label: 'Information', onTap: () {}),
+                            const Divider(),
+                            _ProfileMenuItem(
+                              icon: Icons.logout,
+                              label: 'Log out',
+                              onTap: () => authProvider.signOut(),
+                              color: Colors.red,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
       ),
     );

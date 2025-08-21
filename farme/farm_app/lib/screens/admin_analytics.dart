@@ -96,9 +96,10 @@ class AdminAnalyticsPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 24),
-                // Stats Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // Stats - wrap to avoid horizontal overflow on small screens
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
                   children: [
                     _StatCard(label: 'Total Products', value: '$totalProducts'),
                     _StatCard(label: 'Categories', value: '$totalCategories'),

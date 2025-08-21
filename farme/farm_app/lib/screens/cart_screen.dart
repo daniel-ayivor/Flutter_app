@@ -69,7 +69,42 @@ class CartScreen extends StatelessWidget {
                   itemCount: cartProvider.items.length,
                   itemBuilder: (context, index) {
                     final item = cartProvider.items[index];
-                    return _CartItemCard(item: item);
+                    return Dismissible(
+                      key: ValueKey(item.product.id),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(Icons.delete_outline, color: Colors.red),
+                      ),
+                      onDismissed: (_) {
+                        final removedItem = item;
+                        final removedQuantity = item.quantity;
+                        context.read<CartProvider>().removeItem(removedItem.product.id);
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Removed ${removedItem.product.name}'),
+                            action: SnackBarAction(
+                              label: 'UNDO',
+                              onPressed: () {
+                                // Re-add and restore quantity
+                                context.read<CartProvider>().addItem(removedItem.product);
+                                context.read<CartProvider>().updateQuantity(
+                                  removedItem.product.id,
+                                  removedQuantity,
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                      child: _CartItemCard(item: item),
+                    );
                   },
                 ),
               ),

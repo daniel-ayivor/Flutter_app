@@ -6,6 +6,7 @@ import 'screens/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'authContext.dart';
 import 'screens/user_profile.dart';
+import 'providers/cart_provider.dart';
 
 class UserTaskbar extends StatefulWidget {
   const UserTaskbar({super.key});
@@ -23,9 +24,9 @@ class _UserTaskbarState extends State<UserTaskbar> {
   void initState() {
     super.initState();
     _pages = [
+      HomeScreen(),
       ProductListingPage(),
       CartScreen(),
-      HomeScreen(),
       OrderHistoryScreen(),
       // Placeholder, will be replaced in build
       Container(),
@@ -79,12 +80,50 @@ class _UserTaskbarState extends State<UserTaskbar> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: 'Products'),
-              BottomNavigationBarItem(icon: Icon(Icons.shopping_cart_outlined), label: 'Cart'),
-              BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
-              BottomNavigationBarItem(icon: Icon(Icons.receipt_long_outlined), label: 'Orders'),
-              BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
+            items: <BottomNavigationBarItem>[
+              const BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
+              const BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: 'Products'),
+              BottomNavigationBarItem(
+                icon: Consumer<CartProvider>(
+                  builder: (context, cart, child) {
+                    final count = cart.itemCount;
+                    return Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        const Icon(Icons.shopping_cart_outlined),
+                        if (count > 0)
+                          Positioned(
+                            right: -6,
+                            top: -4,
+                            child: Container
+                              (
+                              padding: const EdgeInsets.all(2),
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                              child: Center(
+                                child: Text(
+                                  '$count',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+                label: 'Cart',
+              ),
+              const BottomNavigationBarItem(icon: Icon(Icons.receipt_long_outlined), label: 'Orders'),
+              const BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
             ],
             currentIndex: _selectedIndex,
             selectedItemColor: Colors.green.shade700,

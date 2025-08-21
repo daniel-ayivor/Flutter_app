@@ -3,6 +3,7 @@ import 'screens/admin_product_management.dart';
 import 'screens/admin_order_management.dart';
 import 'screens/admin_profile.dart';
 import 'screens/admin_analytics.dart';
+import 'screens/admin_user_management.dart';
 
 class AdminTaskbar extends StatefulWidget {
   const AdminTaskbar({super.key});
@@ -22,6 +23,7 @@ class _AdminTaskbarState extends State<AdminTaskbar> {
     _pages = [
       AdminProductManagement(),
       AdminOrderManagement(),
+      AdminUserManagement(),
       AdminProfilePage(),
       AdminAnalyticsPage(),
     ];
@@ -56,6 +58,7 @@ class _AdminTaskbarState extends State<AdminTaskbar> {
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: 'Products'),
               BottomNavigationBarItem(icon: Icon(Icons.list_alt_outlined), label: 'Orders'),
+              BottomNavigationBarItem(icon: Icon(Icons.group_outlined), label: 'Users'),
               BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
               BottomNavigationBarItem(icon: Icon(Icons.analytics_outlined), label: 'Analytics'),
             ],

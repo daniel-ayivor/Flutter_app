@@ -113,7 +113,7 @@ class CheckoutScreenState extends State<CheckoutScreen> {
                                 ),
                               ),
                               Text(
-                                '\$${cartProvider.total.toStringAsFixed(2)}',
+                                '₵${cartProvider.total.toStringAsFixed(2)}',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,

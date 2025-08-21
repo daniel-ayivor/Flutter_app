@@ -212,11 +212,19 @@ class _ProductCardHorizontal extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(' 24${product.price.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold)),
-              CircleAvatar(
-                radius: 14,
-                backgroundColor: Colors.black,
-                child: Icon(Icons.add, color: Colors.white, size: 16),
+              Text('₵${product.price.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold)),
+              GestureDetector(
+                onTap: () {
+                  context.read<CartProvider>().addItem(product);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('${product.name} added to cart')),
+                  );
+                },
+                child: CircleAvatar(
+                  radius: 14,
+                  backgroundColor: Colors.black,
+                  child: Icon(Icons.add, color: Colors.white, size: 16),
+                ),
               ),
             ],
           ),
@@ -256,13 +264,18 @@ class _ProductCardVertical extends StatelessWidget {
                     Text(product.rating.toString()),
                   ],
                 ),
-                Text(' 24${product.price.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('₵${product.price.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
           ),
           SizedBox(width: 8),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              context.read<CartProvider>().addItem(product);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('${product.name} added to cart')),
+              );
+            },
             child: Text('Add'),
             style: ElevatedButton.styleFrom(
               shape: StadiumBorder(),
