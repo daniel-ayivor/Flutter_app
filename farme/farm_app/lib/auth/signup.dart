@@ -12,6 +12,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController(); // Added for sign-up
@@ -19,6 +20,7 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -26,6 +28,7 @@ class _SignUpState extends State<SignUp> {
   }
 
   void _handleEmailSignUp() async {
+    String name = _nameController.text;
     String email = _emailController.text;
     String password = _passwordController.text;
     String confirmPassword = _confirmPasswordController.text;
@@ -39,7 +42,7 @@ class _SignUpState extends State<SignUp> {
 
     setState(() => _isLoading = true);
     final authProvider = context.read<AuthProvider>();
-    await authProvider.signUp(email, password);
+    await authProvider.signUp(email, password, name: name);
     if (!mounted) return;
     setState(() => _isLoading = false);
 
@@ -95,6 +98,30 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
               const SizedBox(height: 40),
+
+              // Name Text Field
+              TextFormField(
+                controller: _nameController,
+                style: const TextStyle(color: Colors.black87),
+                decoration: InputDecoration(
+                  labelText: 'Full Name',
+                  labelStyle: const TextStyle(color: Colors.grey),
+                  hintText: 'Enter your full name',
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  prefixIcon: const Icon(Icons.person, color: Colors.grey),
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.green),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
 
               // Email Text Field
               TextFormField(

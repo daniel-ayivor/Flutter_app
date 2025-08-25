@@ -55,10 +55,6 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.black87),
         actions: [
-          IconButton(
-            icon: Icon(Icons.logout, color: Colors.black87),
-            onPressed: () => authProvider.signOut(),
-          ),
         ],
       ),
       body: SafeArea(
@@ -654,18 +650,18 @@ class _ProductCardGrid extends StatelessWidget {
 String _categoryIcon(String category) {
   switch (category.toLowerCase()) {
     case 'fruits':
-      return 'lib/asset/11473559.png';
+      return 'lib/asset/11473559.png'; // This appears to be a fruit image
     case 'vegetables':
-      return 'lib/asset/1247d03d-2cc4-4e55-8420-6fe754a95d77.jpg';
+      return 'lib/asset/woman-shopping-vegetables-supermarket.jpg'; // This is a vegetable image
     case 'grains and cereal':
-      return 'lib/asset/fd90aad7-5a1a-4d47-b6cb-6c6a6dfc6842.jpg';
+      return 'lib/asset/fd90aad7-5a1a-4d47-b6cb-6c6a6dfc6842.jpg'; // This appears to be a grain image
     case 'livestock':
-      return 'lib/asset/letter-f_8057804.png';
+      return 'lib/asset/man-delivering-groceries-customers.jpg'; // This shows livestock
     case 'seeds or seedlings':
-      return 'lib/asset/food_11034759.png';
+      return 'lib/asset/food_11034759.png'; // This appears to be a seed/seedling image
     case 'equipment':
-      return 'lib/asset/google_720255.png';
+      return 'lib/asset/11473559.png'; // Using the fruit image as a placeholder for equipment
     default:
-      return 'lib/asset/11473559.png';
+      return 'lib/asset/11473559.png'; // Default to fruit image
   }
-} 
+}

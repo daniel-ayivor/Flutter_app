@@ -9,6 +9,9 @@ class AdminOrderManagement extends StatefulWidget {
 }
 
 class _AdminOrderManagementState extends State<AdminOrderManagement> {
+  String _searchQuery = '';
+  String _selectedStatus = 'All';
+
   @override
   void initState() {
     super.initState();
@@ -18,66 +21,149 @@ class _AdminOrderManagementState extends State<AdminOrderManagement> {
     });
   }
 
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query.toLowerCase();
+    });
+  }
+
+  void _onStatusChanged(String? status) {
+    setState(() {
+      _selectedStatus = status ?? 'All';
+    });
+  }
+
+  Future<void> _refreshOrders() async {
+    context.read<OrderProvider>().fetchAllOrders();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Management'),
-      ),
-      body: Consumer<OrderProvider>(
-        builder: (context, orderProvider, child) {
-          if (orderProvider.isLoading) {
-            return Center(child: CircularProgressIndicator());
-          }
-
-          if (orderProvider.error != null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error, size: 64, color: Colors.red),
-                  SizedBox(height: 16),
-                  Text('Error: ${orderProvider.error}'),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => orderProvider.fetchAllOrders(),
-                    child: Text('Retry'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          if (orderProvider.orders.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.receipt_long, size: 100, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text(
-                    'No orders yet',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Orders will appear here when customers place them',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return ListView.builder(
-            padding: EdgeInsets.all(16),
-            itemCount: orderProvider.orders.length,
-            itemBuilder: (context, index) {
-              final order = orderProvider.orders[index];
-              return AdminOrderCard(order: order);
+        backgroundColor: Colors.white,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: OrderSearchDelegate(
+                  onSearchChanged: _onSearchChanged,
+                ),
+              );
             },
-          );
-        },
+          ),
+        ],
+      ),
+      body: RefreshIndicator(
+        onRefresh: _refreshOrders,
+        child: Column(
+          children: [
+            // Filter Section
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[50],
+                border: Border(bottom: BorderSide(color: Colors.grey[300]!)),
+              ),
+              child: Row(
+                children: [
+                  const Text('Filter by status:'),
+                  const SizedBox(width: 8),
+                  DropdownButton<String>(
+                    value: _selectedStatus,
+                    items: const [
+                      DropdownMenuItem(value: 'All', child: Text('All')),
+                      DropdownMenuItem(value: 'Pending', child: Text('Pending')),
+                      DropdownMenuItem(value: 'Processing', child: Text('Processing')),
+                      DropdownMenuItem(value: 'Shipped', child: Text('Shipped')),
+                      DropdownMenuItem(value: 'Delivered', child: Text('Delivered')),
+                      DropdownMenuItem(value: 'Cancelled', child: Text('Cancelled')),
+                    ],
+                    onChanged: _onStatusChanged,
+                  ),
+                ],
+              ),
+            ),
+            // Order List
+            Expanded(
+              child: Consumer<OrderProvider>(
+                builder: (context, orderProvider, child) {
+                  if (orderProvider.isLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+
+                  if (orderProvider.error != null) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.error, size: 64, color: Colors.red),
+                          SizedBox(height: 16),
+                          Text('Error: ${orderProvider.error}'),
+                          SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () => orderProvider.fetchAllOrders(),
+                            child: Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  // Apply filters
+                  final filteredOrders = orderProvider.orders.where((order) {
+                    final orderId = order.id.toLowerCase();
+                    final userId = order.userId.toLowerCase();
+                    final matchesSearch = _searchQuery.isEmpty || 
+                        orderId.contains(_searchQuery) || 
+                        userId.contains(_searchQuery);
+                    
+                    final matchesStatus = _selectedStatus == 'All' || order.status == _selectedStatus;
+                    
+                    return matchesSearch && matchesStatus;
+                  }).toList();
+
+                  if (filteredOrders.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.receipt_long, size: 100, color: Colors.grey),
+                          SizedBox(height: 16),
+                          Text(
+                            _searchQuery.isEmpty ? 'No orders yet' : 'No orders found',
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            _searchQuery.isEmpty 
+                              ? 'Orders will appear here when customers place them' 
+                              : 'No orders match your search criteria',
+                            style: TextStyle(color: Colors.grey),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    padding: EdgeInsets.all(16),
+                    itemCount: filteredOrders.length,
+                    itemBuilder: (context, index) {
+                      final order = filteredOrders[index];
+                      return AdminOrderCard(order: order);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -90,8 +176,19 @@ class AdminOrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
       margin: EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
       child: ExpansionTile(
         title: Row(
           children: [
@@ -172,18 +269,59 @@ class AdminOrderCard extends StatelessWidget {
                 ),
                 SizedBox(height: 8),
                 ...order.items.map((item) => Padding(
-                  padding: EdgeInsets.only(bottom: 4),
+                  padding: EdgeInsets.only(bottom: 8),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      // Product Image
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.grey[200],
+                        ),
+                        child: item.product.imageUrl.isNotEmpty
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  item.product.imageUrl,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(Icons.image, color: Colors.grey);
+                                  },
+                                ),
+                              )
+                            : Icon(Icons.image, color: Colors.grey),
+                      ),
+                      SizedBox(width: 12),
+                      // Name and Price
                       Expanded(
-                        child: Text(
-                          '${item.product.name} (x${item.quantity})',
-                          style: TextStyle(fontSize: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.product.name,
+                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              '${item.quantity} x ₵${item.product.price.toStringAsFixed(2)}',
+                              style: TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
+                          ],
                         ),
                       ),
+                      // Total Price
                       Text(
-                        '₵${item.totalPrice.toStringAsFixed(2)}',
-                        style: TextStyle(fontSize: 12),
+                        '₵${(item.product.price * item.quantity).toStringAsFixed(2)}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
+                        ),
                       ),
                     ],
                   ),
@@ -240,9 +378,20 @@ class AdminOrderCard extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                      child: DropdownButton<String>(
+                      child: DropdownButtonFormField<String>(
                         value: order.status,
                         isExpanded: true,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.grey[300]!),
+                          ),
+                        ),
                         items: [
                           'Pending',
                           'Processing',
@@ -295,4 +444,45 @@ class AdminOrderCard extends StatelessWidget {
         return Colors.grey;
     }
   }
-} 
+}
+
+class OrderSearchDelegate extends SearchDelegate<String> {
+  final Function(String) onSearchChanged;
+
+  OrderSearchDelegate({required this.onSearchChanged});
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+          onSearchChanged('');
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    onSearchChanged(query);
+    return Container(); // We're handling the search in the main screen
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    onSearchChanged(query);
+    return Container(); // We're handling the search in the main screen
+  }
+}
